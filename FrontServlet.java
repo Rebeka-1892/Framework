@@ -4,34 +4,31 @@
  */
 package etu1892.framework.servlet;
 
-import Servlet.*;
 import Class.Utile;
+import etu1892.framework.Mapping;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
 
 /**
  *
  * @author rebeka
  */
 public class FrontServlet extends HttpServlet {
+    HashMap<String,Mapping> MappingUrls;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
             Utile utile = new Utile();
             try {
-                
-            out.println(utile.getUrl(request));
+                out.println(utile.getUrl(request));
             } catch (Exception e) {
             }
-//            out.println("Tonga " + request.getRequestURL() + " <-");
-//            out.println("Tonga " + request.getPathInfo() + " <-");
             
         }
     }
@@ -44,7 +41,7 @@ public class FrontServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
+    
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
@@ -58,7 +55,7 @@ public class FrontServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
+    
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
@@ -69,7 +66,7 @@ public class FrontServlet extends HttpServlet {
      *
      * @return a String containing servlet description
      */
-    @Override
+    
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
