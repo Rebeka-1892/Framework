@@ -1,6 +1,6 @@
 package spring;
 
-import Class.Utile;
+import utilitaire.Utile;
 import etu1892.framework.Mapping;
 import etu1892.framework.Traitement;
 import java.util.HashMap;
