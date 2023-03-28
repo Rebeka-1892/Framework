@@ -1,4 +1,5 @@
 package modele;
+import utilitaire.ModelView;
 
 import annotation.Urls;
 
@@ -9,8 +10,9 @@ public class Emp {
     public Emp(){}
     
     @Urls(url="emp_all")
-    public String findAll(){
-        return nom;
+    public ModelView findAll(){
+        ModelView modele = new ModelView("emp_all.jsp");
+        return modele;
     }
 }
 
