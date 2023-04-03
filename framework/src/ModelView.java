@@ -1,16 +1,17 @@
 package utilitaire;
 
-public class ModelView{
+public class ModelView {
     String view;
 
-    public ModelView(String vu){
-        this.view = vu;
+    public ModelView(String view) {
+        this.view = view;
     }
 
-    public void setView(String vu){
-        this.view = vu;
+    public String getView() {
+        return view;
     }
-    public String getView(){
-        return this.view;
-    }
+
+    public void setView(String view) {
+        this.view = view;
+    }    
 }

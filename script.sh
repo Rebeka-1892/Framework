@@ -6,7 +6,11 @@ jar -cf fw.jar .
 
 cp fw.jar ../../test-framework/WEB-INF/lib/
 
-cd ../../test-framework
+cd ../../test-framework/src
+
+cp -r * ../WEB-INF/classes/
+
+cd ..
 
 jar -cf testfw.war .
 
