@@ -8,18 +8,20 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.lang.reflect.*;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import utilitaire.Utile;
+import utilitaire.*;
 
 public class FrontServlet extends HttpServlet {
     HashMap<String,Mapping> MappingUrls;
+    String baseUrl;
 
     public void init() throws ServletException{
         try {
-            MappingUrls = Utile.getAnnotedUrls(Utile.getClasses("modele"));
+            baseUrl = getInitParameter("baseUrl");
+            MappingUrls = Utile.getAnnotedUrls(Utile.getClasses(""));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -31,29 +33,42 @@ public class FrontServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         Utile utile = new Utile();
         try {
-            String url = utile.getUrl(request);
-            out.print(url);
-            
-            Mapping mapping = MappingUrls.get(url);
-                out.println(mapping.getMethod() + " " + mapping.getClass());
-                
-            String nomDeLaClasse = mapping.getClassName();
+            String url = request.getRequestURL().toString();
+            url = utile.getUrl(url, baseUrl);
+            out.print("Coucou " + url );
+            // for(Map.Entry<String,Mapping> entry: MappingUrls.entrySet()){
+                // out.print(entry.getKey()+"  "+entry.getValue().getClassName());
+            // }
 
-            String nomDeLaMethode = mapping.getMethod();
+            if(MappingUrls.get(url) == null){
+                throw new Exception("Tsy misy");
+            }
+            else{
+                Mapping mapping = MappingUrls.get(url);
+                    
+                String nomClasse = mapping.getClassName();
 
-            Class<?> classe = Class.forName(nomDeLaClasse);
+                String nomMethode = mapping.getMethod();
 
-            Method methode = classe.getDeclaredMethod(nomDeLaMethode);
+                Class<?> classe = Class.forName(nomClasse);
 
-            Object resultat = methode.invoke(new Utile());
+                Method methode = classe.getDeclaredMethod(nomMethode);
 
-            String vu = (String) resultat;
+                Constructor<?> constr = classe.getConstructor();
+                Object instance = constr.newInstance();
 
-            RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
-            dispatcher.forward(request, response);
+                ModelView resultat = (ModelView) methode.invoke(instance);
+
+                String vu = resultat.getView();
+                out.println(vu);
+
+                RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
+                dispatcher.forward(request, response);
+            }
 
         } catch (Exception ex) {
             Logger.getLogger(FrontServlet.class.getName()).log(Level.SEVERE, null, ex);
+            out.println(ex);
         }
     }
 

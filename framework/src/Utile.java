@@ -8,24 +8,23 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.HashMap;
 
 public class Utile {
-    public String getUrl(HttpServletRequest req) throws Exception{
-        if(req.getPathInfo() == null){
-            return "/";
-        }
-        return req.getPathInfo();
+    public String getUrl(String url, String baseUrl) throws Exception{
+        int len = baseUrl.length();
+        return url.substring(len);
     }
     
-    public static HashMap<String,Mapping> getAnnotedUrls(Class[] classes){
+    public static HashMap<String,Mapping> getAnnotedUrls(Vector<Class<?>> vect){
+        Class[] classes = vect.toArray( new Class[ vect.size() ] );
         Method[] methodes;
         String value, className, method;
         Mapping mapping;
         HashMap<String, Mapping> reponse = new HashMap<String, Mapping>();
         for (Class cls : classes){
-            className = cls.getSimpleName();
+            className = cls.getName();
             methodes = cls.getDeclaredMethods();
             for(Method meth : methodes){
                 Urls urls = meth.getAnnotation(Urls.class);
@@ -33,77 +32,57 @@ public class Utile {
                     value = urls.url();
                     method = meth.getName();
                     mapping = new Mapping(className, method);
+                    System.out.println(className + " " + method);
                     reponse.put(value, mapping);
+                    System.out.println(value + " " + mapping.getClassName());
                 }
             }
         }
         return reponse;
     }
-    
-    public static Class[] getClasses(String pckgname) throws ClassNotFoundException {
-        ArrayList<Class> classes = new ArrayList<>();
 
+    public static Vector<Class<?>> getClasses(String packageName) throws ClassNotFoundException {
+       Vector<Class<?>> classes=new Vector<Class<?>>();
         File directory = null;
         try {
-            ClassLoader cld = Thread.currentThread().getContextClassLoader();
-            if (cld == null) {
-                throw new ClassNotFoundException("la classe loader ne peut etre obtenue.");
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            if (classLoader == null) {
+                throw new ClassNotFoundException("Can't get class loader.");
             }
-            String path = pckgname.replace('.', '/');
-            URL resource = cld.getResource(path);
+            String path = packageName.replace('.', '/');
+            URL resource = classLoader.getResource(path);
             if (resource == null) {
-                throw new ClassNotFoundException("pas de ressource dans le paquet " + path);
+                throw new ClassNotFoundException("No resource for " + path);
             }
             directory = new File(resource.getFile());
         } catch (NullPointerException x) {
-            throw new ClassNotFoundException(pckgname + " (" + directory + ") n'est pas un paquet valide");
+            x.printStackTrace();
+            throw new ClassNotFoundException(packageName + " (" + directory + ") does not appear to be a valid package");
         }
         if (directory.exists()) {
             String[] files = directory.list();
-            for (String file : files) {
-                System.out.println(file);
-                if (file.endsWith(".class")) {
-                    classes.add(Class.forName(pckgname + '.' + file.substring(0, file.length() - 6)));
-                }
-                else{
-                    getClasses(pckgname+"."+file);
+            for (int i = 0; i < files.length; i++) {
+                File file = new File(directory.getAbsolutePath() + File.separator + files[i]);
+                if (file.isDirectory()) {
+                    String inpack=file.getName();
+                    if(packageName.length()!=0){
+                        inpack=packageName+"."+inpack;
+                    }
+                    classes.addAll(getClasses(inpack));
+                } else {
+                    
+                    if (files[i].endsWith(".class")) {
+                        String name=files[i].substring(0, files[i].length() - 6);
+                        if(packageName.length()!=0){
+                            name=packageName+"."+name;
+                        }
+                        classes.add(Class.forName(name));
+                    }
                 }
             }
         } else {
-            throw new ClassNotFoundException(pckgname + " n'est pas un paquet valide");
+            throw new ClassNotFoundException(packageName + " does not appear to be a valid package");
         }
-        Class[] classesA = new Class[classes.size()];
-        classes.toArray(classesA);
-        return classesA;
-    }
-    
-    public static ArrayList<Class<?>> listClasses(String directory) throws ClassNotFoundException {
-        ArrayList<Class<?>> classes = new ArrayList<>();
-        File dir = new File(directory);
-
-        if (!dir.isDirectory()) {
-            throw new IllegalArgumentException("Le chemin doit correspondre à un dossier !");
-        }
-
-        File[] files = dir.listFiles();
-
-        for (File file : files) {
-            if (file.isDirectory()) {
-                classes.addAll(listClasses(file.getAbsolutePath()));
-            } else if (file.getName().endsWith(".class")) {
-                // classes.add(Class.forName(pckgname + '.' + file.substring(0, file.length() - 6)));
-                    System.out.println(file.getName());
-                    String className = file.getName().substring(0, file.getName().length() - 6);
-                try {
-                    // String className = file.getName().substring(0, file.getName().length() - 6);
-                    Class<?> cls = new URLClassLoader(new URL[]{dir.toURI().toURL()}).loadClass(className);
-                    classes.add(cls);
-                } catch (MalformedURLException e) {
-                    System.out.println(e);
-                }
-            }
-        }
-
         return classes;
     }
 }

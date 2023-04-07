@@ -3,12 +3,17 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
   xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
     <servlet>
+        <init-param>
+            <param-name>baseUrl</param-name>
+            <param-value>http://localhost:8081/testfw/</param-value>
+        </init-param>
         <servlet-name>FrontServlet</servlet-name>
         <servlet-class>etu1892.framework.servlet.FrontServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>FrontServlet</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/</url-pattern>
+
     </servlet-mapping>
     
     <session-config>

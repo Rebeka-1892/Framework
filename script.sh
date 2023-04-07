@@ -1,3 +1,5 @@
+javac -d framework/src framework/src/*.java
+
 javac -d framework/build framework/src/*.java
 
 cd framework/build
