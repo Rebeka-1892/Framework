@@ -47,10 +47,30 @@ public class FrontServlet extends HttpServlet {
 
             Object resultat = methode.invoke(new Utile());
 
+<<<<<<< Updated upstream
             String vu = (String) resultat;
 
             RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
             dispatcher.forward(request, response);
+=======
+                Constructor<?> constr = classe.getConstructor();
+                Object instance = constr.newInstance();
+                if(methode.invoke(instance) instanceof ModelView){
+                    ModelView resultat = (ModelView) methode.invoke(instance);
+                    System.out.println("vita invoke");
+
+                    HashMap<String,Object> rep = resultat.getData();
+                    for(Map.Entry<String,Object> entry: rep.entrySet()){
+                        request.setAttribute(entry.getKey(), entry.getValue());
+                    }
+
+                    String vu = resultat.getView();
+                    RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
+                    dispatcher.forward(request, response);
+                }
+                // out.println(vu);
+            }
+>>>>>>> Stashed changes
 
         } catch (Exception ex) {
             Logger.getLogger(FrontServlet.class.getName()).log(Level.SEVERE, null, ex);
