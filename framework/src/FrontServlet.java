@@ -56,14 +56,20 @@ public class FrontServlet extends HttpServlet {
 
                 Constructor<?> constr = classe.getConstructor();
                 Object instance = constr.newInstance();
+                if(methode.invoke(instance) instanceof ModelView){
+                    ModelView resultat = (ModelView) methode.invoke(instance);
+                    System.out.println("vita invoke");
 
-                ModelView resultat = (ModelView) methode.invoke(instance);
+                    HashMap<String,Object> rep = resultat.getData();
+                    for(Map.Entry<String,Object> entry: rep.entrySet()){
+                        request.setAttribute(entry.getKey(), entry.getValue());
+                    }
 
-                String vu = resultat.getView();
-                out.println(vu);
-
-                RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
-                dispatcher.forward(request, response);
+                    String vu = resultat.getView();
+                    RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
+                    dispatcher.forward(request, response);
+                }
+                // out.println(vu);
             }
 
         } catch (Exception ex) {
