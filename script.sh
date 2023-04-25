@@ -10,6 +10,8 @@ cp fw.jar ../../test-framework/WEB-INF/lib/
 
 cd ../../test-framework/src
 
+javac -d . *.java
+
 cp -r * ../WEB-INF/classes/
 
 cd ..

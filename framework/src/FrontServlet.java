@@ -26,6 +26,48 @@ public class FrontServlet extends HttpServlet {
             e.printStackTrace();
         }
     }
+
+    public void setValue(HttpServletRequest request, Object obj)throws ServletException, IOException, Exception {
+        Map<String, String[]> parametre = request.getParameterMap();
+        for ( Map.Entry<String, String[]> paramMap : parametre.entrySet() ) {
+            String nomField = paramMap.getKey();
+            String[] paramValues = paramMap.getValue();
+            for(int i = 0; i<obj.getClass().getDeclaredFields().length; i++){
+                if(obj.getClass().getDeclaredFields()[i].getName().compareToIgnoreCase(nomField) == 0){
+                    Field field = obj.getClass().getDeclaredFields()[i];
+                    field.setAccessible(true);
+                    Class type = field.getType();
+                    
+                    if(type == int.class){
+                        for (String paramValue : paramValues) {
+                            System.out.println("int");
+                            int value = Integer.parseInt(paramValue);
+                            field.set(obj, value);
+                        }
+                    }
+                    if(type == double.class){
+                        for (String paramValue : paramValues) {
+                            double value = Double.parseDouble(paramValue);
+                            field.set(obj, value);
+                        }
+                    }
+                    if(type == String.class){
+                        for (String paramValue : paramValues) {
+                            field.set(obj, paramValue);
+                        }
+                    }
+                }
+            }
+            // for (String paramValue : paramValues) {
+            //     for(int i=0; i<obj.getClass().getDeclaredMethods().length; i++){
+            //         if(obj.getClass().getDeclaredMethods()[i].getName().compareToIgnoreCase("set"+ nomField) == 0){
+            //             Method methode = obj.getClass().getDeclaredMethods()[i];
+            //             methode.invoke(obj, paramValue);
+            //         }
+            //     }
+            // }
+        }
+    }
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -36,9 +78,6 @@ public class FrontServlet extends HttpServlet {
             String url = request.getRequestURL().toString();
             url = utile.getUrl(url, baseUrl);
             out.print("Coucou " + url );
-            // for(Map.Entry<String,Mapping> entry: MappingUrls.entrySet()){
-                // out.print(entry.getKey()+"  "+entry.getValue().getClassName());
-            // }
 
             if(MappingUrls.get(url) == null){
                 throw new Exception("Tsy misy");
@@ -51,19 +90,28 @@ public class FrontServlet extends HttpServlet {
                 String nomMethode = mapping.getMethod();
 
                 Class<?> classe = Class.forName(nomClasse);
-
+                
                 Method methode = classe.getDeclaredMethod(nomMethode);
 
                 Constructor<?> constr = classe.getConstructor();
                 Object instance = constr.newInstance();
 
-                ModelView resultat = (ModelView) methode.invoke(instance);
+                setValue(request, instance);
 
-                String vu = resultat.getView();
-                out.println(vu);
+                if(methode.invoke(instance) instanceof ModelView){
+                    ModelView resultat = (ModelView) methode.invoke(instance);
+                    System.out.println("vita invoke");
 
-                RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
-                dispatcher.forward(request, response);
+                    HashMap<String,Object> rep = resultat.getData();
+                    for(Map.Entry<String,Object> entry: rep.entrySet()){
+                        request.setAttribute(entry.getKey(), entry.getValue());
+                    }
+
+                    String vu = resultat.getView();
+                    RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
+                    dispatcher.forward(request, response);
+                }
+                // out.println(vu);
             }
 
         } catch (Exception ex) {
