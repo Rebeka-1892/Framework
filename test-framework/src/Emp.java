@@ -1,6 +1,6 @@
 package modele;
 
-import annotation.Urls;
+import annotation.*;
 import utilitaire.ModelView;
 
 public class Emp {
@@ -46,6 +46,17 @@ public class Emp {
     public ModelView Save(){
         System.out.println("Age: " + getage());
         Emp employe = new Emp(getage(), getnom());
+
+        ModelView mod = new ModelView();
+        mod.AddItem("list_emp", employe);
+
+        ModelView modele = new ModelView("emp_all.jsp", mod.getData());
+        return modele;
+    }
+
+    @Urls(url="emp_by_id")
+    public ModelView FindById(@Parametre(nom = "id") int id) throws Exception{
+        Emp employe = new Emp(77, "Tonga");
 
         ModelView mod = new ModelView();
         mod.AddItem("list_emp", employe);

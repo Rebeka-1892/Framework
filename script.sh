@@ -1,21 +1,25 @@
-javac -d framework/src framework/src/*.java
+compile_source="framework/src/*.java"
+to_build="framework/build"
+to_tomcat="/home/ravalison/apache-tomcat-10.0.27/webapps"
+to_lib="../../test-framework/WEB-INF/lib/"
+to_project="../../test-framework/src"
+framework_name="fw.jar"
+project_name="testfw.war"
 
-javac -d framework/build framework/src/*.java
+javac -parameters -d $to_build $compile_source
 
-cd framework/build
+cd $to_build
 
-jar -cf fw.jar .
+jar -cf $framework_name .
 
-cp fw.jar ../../test-framework/WEB-INF/lib/
+cp $framework_name $to_lib
 
-cd ../../test-framework/src
+cd $to_project
 
 javac -d . *.java
 
-cp -r * ../WEB-INF/classes/
-
 cd ..
 
-jar -cf testfw.war .
+jar -cf $project_name .
 
-cp testfw.war /home/ravalison/apache-tomcat-10.0.27/webapps
+cp $project_name $to_tomcat

@@ -1,15 +1,24 @@
 package utilitaire;
 
-import annotation.Urls;
+import annotation.*;
 import etu1892.framework.Mapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 import java.util.HashMap;
+import java.text.SimpleDateFormat;
+import java.lang.reflect.Method;
+import java.lang.annotation.*;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.sql.*;
+import java.lang.reflect.*;
+import jakarta.servlet.ServletException;
 
 public class Utile {
     public String getUrl(String url, String baseUrl) throws Exception{
@@ -84,5 +93,135 @@ public class Utile {
             throw new ClassNotFoundException(packageName + " does not appear to be a valid package");
         }
         return classes;
+    }
+
+    public static Object[] getListeObjetsParametres(Method m, HttpServletRequest request) throws Exception {
+        Parameter [] lp = m.getParameters();
+        Object[] rep = new Object[lp.length];
+
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        for (int i = 0; i < lp.length; i++) {
+            System.out.println("isNamePresent "+lp[i].isNamePresent());
+            System.out.println("nom param "+ lp[i].getName());
+            Annotation[] annotes=lp[i].getAnnotations();
+            for (Annotation annotation : annotes) {
+                if(annotation.annotationType().getSimpleName().equals("Parametre")) {
+                    String valStr = request.getParameter(annotation.annotationType().getMethod("nom").invoke(annotation).toString());
+                    if(valStr != null) {
+                        Class typeParametre = lp[i].getType();
+                        if (typeParametre == int.class) {
+                            int intValue = Integer.parseInt(valStr);
+                            rep[i] = intValue;
+                        }
+                        else if (typeParametre == Integer.class) {
+                            Integer intValue = Integer.parseInt(valStr);
+                            rep[i] = intValue;
+                        }
+                        else if (typeParametre == double.class) {
+                            double doubleValue = Double.parseDouble(valStr);
+                            rep[i] = doubleValue;
+                        }
+                        else if (typeParametre == Double.class) {
+                            Double doubleValue = Double.parseDouble(valStr);
+                            rep[i] = doubleValue;
+                        }
+                        else if (typeParametre == boolean.class) {
+                            boolean booleanValue = Boolean.parseBoolean(valStr);
+                            rep[i] = booleanValue;
+                        } else if (typeParametre == String.class) {
+                            rep[i] = valStr;
+                        }
+                        else if (typeParametre == Date.class) {
+                            String dateFormat = "yyyy-MM-dd";
+                            SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+                            Date date = formatter.parse(valStr);
+                            rep[i] = date;
+                        }
+                    }
+                    else {
+                        rep[i] = null;
+                    }
+                }
+            }
+        }
+        return rep;
+    }
+
+    public static Method getMethod(Object objet, String nomMethode){
+        for(int i=0; i< objet.getClass().getDeclaredMethods().length; i++){
+            if(objet.getClass().getDeclaredMethods()[i].getName().compareToIgnoreCase(nomMethode)==0){
+                Method methode = objet.getClass().getDeclaredMethods()[i];
+                return methode;
+            }
+        }
+        return null;
+    }
+
+    public static void setValue(HttpServletRequest request, Object obj)throws ServletException, IOException, Exception {
+        Map<String, String[]> parametre = request.getParameterMap();
+        for ( Map.Entry<String, String[]> paramMap : parametre.entrySet() ) {
+            String nomField = paramMap.getKey();
+            String[] paramValues = paramMap.getValue();
+            for(int i = 0; i<obj.getClass().getDeclaredFields().length; i++){
+                if(obj.getClass().getDeclaredFields()[i].getName().compareToIgnoreCase(nomField) == 0){
+                    Field field = obj.getClass().getDeclaredFields()[i];
+                    field.setAccessible(true);
+                    Class typeParametre = field.getType();
+                    
+                    if(typeParametre == int.class){
+                        for (String paramValue : paramValues) {
+                            System.out.println("int");
+                            int value = Integer.parseInt(paramValue);
+                            field.set(obj, value);
+                        }
+                    }
+                    if(typeParametre == Integer.class){
+                        for (String paramValue : paramValues) {
+                            System.out.println("int");
+                            Integer value = Integer.parseInt(paramValue);
+                            field.set(obj, value);
+                        }
+                    }
+                    if(typeParametre == double.class){
+                        for (String paramValue : paramValues) {
+                            double value = Double.parseDouble(paramValue);
+                            field.set(obj, value);
+                        }
+                    }
+                    if(typeParametre == Double.class){
+                        for (String paramValue : paramValues) {
+                            Double value = Double.parseDouble(paramValue);
+                            field.set(obj, value);
+                        }
+                    }
+                    if(typeParametre == boolean.class){
+                        for (String paramValue : paramValues) {
+                            boolean value = Boolean.parseBoolean(paramValue);
+                            field.set(obj, value);
+                        }
+                    }
+                    if(typeParametre == String.class){
+                        for (String paramValue : paramValues) {
+                            field.set(obj, paramValue);
+                        }
+                    }
+                    if(typeParametre == Date.class){
+                        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+                        for (String paramValue : paramValues) {
+                            java.util.Date value = format.parse(paramValue);
+                            field.set(obj, value);
+                        }
+                    }
+                    if(typeParametre == Timestamp.class){
+                        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                        for (String paramValue : paramValues) {
+                            java.util.Date date = format.parse(paramValue);
+                            Timestamp value = new Timestamp(date.getTime());
+                            field.set(obj, value);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
