@@ -1,0 +1,34 @@
+1) Ajouter dans votre classpath et dans lib le framework fw.jar
+
+2) Dans init-param du web.xml , ajoutez le nom de votre projet puis "/" dans param-value
+Par exemple:
+        <init-param>
+            <param-name>baseUrl</param-name>
+            <param-value>http://localhost:8081/nom_de_votre_projet/</param-value>
+        </init-param>
+
+3) Mettre dans src du test vos controlleurs
+
+4) Importer dans chaque controlleur ces packages:
+-import annotation.Urls;
+-import utilitaire.ModelView;
+
+5) Vous devez avoir un constructeur vide dans chaque controlleur
+
+6) N'oubliez pas d'ajouter vos getters et setters
+
+7) Si vous voulez creer une methode dans votre controlleur, il faut qu'elle soit annotee et retourne un ModelView
+Pour annoter, vous n'avez pas besoin de mettre "/" au debut de votre annotation
+Notre Modelview a besoin de 2 arguments: un vu et les donnees , cle et valeur, a faire passer dans le vu et appeler 
+dans le vu la cle
+Par exemple:
+    @Urls(url="votre_url_mapping")
+    public ModelView nom_de_votre methode(){
+        ModelView mod = new ModelView();
+        mod.AddItem(cle, valeur);
+
+        ModelView modele = new ModelView(vu, mod.getData());
+        return modele;
+    }
+
+8) Pou creer une formulaire, le name de votre input doit correspondre au nom de l'attribut de votre classe
