@@ -6,8 +6,14 @@ import utilitaire.ModelView;
 @Scope(type="singleton")
 public class Emp {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     int age;
     String nom;
+=======
+    String nom = "";
+    int age = 0;
+    FileUpload file = null;
+>>>>>>> Stashed changes
 =======
     String nom = "";
     int age = 0;
