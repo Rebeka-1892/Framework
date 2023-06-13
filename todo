@@ -1,0 +1,9 @@
+- verifier si singleton (cad @scope("singleton")) sinon (@scope(normal/others))
+- si singleton mamorona HashMap<String nomclass, Object classe> de jerena oe 
+efa misy instance ve, sinon micreer vavao
+- fonction argument n fields[] anle modele de setena null daoly le field tsirairay ao amn utile ho null
+- atao anaty HashMap<String nomclass, Object classe> ze singleton, verifiena oe efa ao ve, rah ao de averina valeur par defaut n attribut any, 
+rah tsy mbola ao de micreer vavao
+- ze tsy singleton atao otran taloh iany
+
+fonction maka singleton de atao anaty HashMap

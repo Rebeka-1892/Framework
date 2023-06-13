@@ -4,10 +4,11 @@ import annotation.*;
 import utilitaire.ModelView;
 import utilitaire.FileUpload;
 
+@Scope(type="singleton")
 public class Emp {
-    int age;
-    String nom;
-    FileUpload file;
+    String nom = "";
+    int age = 0;
+    FileUpload file = null;
 
     public Emp(int age, String nom) {
         this.age = age;

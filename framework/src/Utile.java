@@ -5,6 +5,7 @@ import etu1892.framework.Mapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.lang.reflect.Parameter;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -57,6 +58,32 @@ public class Utile {
             }
         }
         return reponse;
+    }
+
+    public static HashMap<String, Object> getSingletonClasses(Vector<Class<?>> vect) {
+        HashMap<String, Object> singletonClasses = new HashMap<String, Object>();
+        Class[] classes = vect.toArray( new Class[ vect.size() ] );
+        for (Class<?> clazz : classes) {
+            Annotation[] annotations = clazz.getAnnotations();
+            for (Annotation annotation : annotations) {
+                if (annotation.annotationType() == Scope.class) {
+                    Scope scopeAnnotation = (Scope) annotation;
+                    String type = scopeAnnotation.type();
+                    if ("singleton".equals(type)) {
+                        try {
+                            Object instance = clazz.newInstance();
+                            singletonClasses.put(clazz.getName(), instance);
+                            System.out.println("Singleton: " + clazz.getName());
+                        } catch (InstantiationException | IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        return singletonClasses;
     }
 
     public static Vector<Class<?>> getClasses(String packageName) throws ClassNotFoundException {
@@ -130,98 +157,37 @@ public class Utile {
                         String valStr = request.getParameter(annotation.annotationType().getMethod("nom").invoke(annotation).toString());
                         System.out.println("Le formulaire n'a pas d'attribut 'enctype' de type multipart/form-data.");
                         if(valStr != null) {
-                        Class typeParametre = lp[i].getType();
-                        if (typeParametre == int.class) {
-                            int intValue = Integer.parseInt(valStr);
-                            rep[i] = intValue;
-                        }
-                        else if (typeParametre == Integer.class) {
-                            Integer intValue = Integer.parseInt(valStr);
-                            rep[i] = intValue;
-                        }
-                        else if (typeParametre == double.class) {
-                            double doubleValue = Double.parseDouble(valStr);
-                            rep[i] = doubleValue;
-                        }
-                        else if (typeParametre == Double.class) {
-                            Double doubleValue = Double.parseDouble(valStr);
-                            rep[i] = doubleValue;
-                        }
-                        else if (typeParametre == boolean.class) {
-                            boolean booleanValue = Boolean.parseBoolean(valStr);
-                            rep[i] = booleanValue;
-                        } else if (typeParametre == String.class) {
-                            rep[i] = valStr;
-                        }
-                        else if (typeParametre == Date.class) {
-                            String dateFormat = "yyyy-MM-dd";
-                            SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
-                            Date date = formatter.parse(valStr);
-                            rep[i] = date;
-                        }
-                        // else if (typeParametre == FileUpload.class){
-                        //     String enctype = request.getContentType();        
-                        //     if (enctype != null && enctype.startsWith("multipart/form-data")) {
-                        //         System.out.println("Le formulaire a un attribut 'enctype' de type multipart/form-data.");
-                        //         Part filePart = request.getPart(valStr);
-                        //         String fileName = Utile.getFileName(filePart);
-                        //         byte[] bites = Utile.readBytesFromPart(filePart);
-                        //         String filePath = "/home/ravalison/GitHub/byte.txt";
-                        //         Utile.writeBytesAndFileNameToFile(bites, fileName, filePath);
-                        //         FileUpload fileupload = new FileUpload(fileName, "", bites);
-                        //         rep[i] = fileupload;
-                        //     } else {
-                        //         System.out.println("Le formulaire n'a pas d'attribut 'enctype' de type multipart/form-data.");
-                        //     }
-                        // }
+                            Class typeParametre = lp[i].getType();
+                            if (typeParametre == int.class) {
+                                int intValue = Integer.parseInt(valStr);
+                                rep[i] = intValue;
+                            }
+                            else if (typeParametre == Integer.class) {
+                                Integer intValue = Integer.parseInt(valStr);
+                                rep[i] = intValue;
+                            }
+                            else if (typeParametre == double.class) {
+                                double doubleValue = Double.parseDouble(valStr);
+                                rep[i] = doubleValue;
+                            }
+                            else if (typeParametre == Double.class) {
+                                Double doubleValue = Double.parseDouble(valStr);
+                                rep[i] = doubleValue;
+                            }
+                            else if (typeParametre == boolean.class) {
+                                boolean booleanValue = Boolean.parseBoolean(valStr);
+                                rep[i] = booleanValue;
+                            } else if (typeParametre == String.class) {
+                                rep[i] = valStr;
+                            }
+                            else if (typeParametre == Date.class) {
+                                String dateFormat = "yyyy-MM-dd";
+                                SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+                                Date date = formatter.parse(valStr);
+                                rep[i] = date;
+                            }
                         }
                     }
-                    // if(valStr != null) {
-                    //     Class typeParametre = lp[i].getType();
-                    //     if (typeParametre == int.class) {
-                    //         int intValue = Integer.parseInt(valStr);
-                    //         rep[i] = intValue;
-                    //     }
-                    //     else if (typeParametre == Integer.class) {
-                    //         Integer intValue = Integer.parseInt(valStr);
-                    //         rep[i] = intValue;
-                    //     }
-                    //     else if (typeParametre == double.class) {
-                    //         double doubleValue = Double.parseDouble(valStr);
-                    //         rep[i] = doubleValue;
-                    //     }
-                    //     else if (typeParametre == Double.class) {
-                    //         Double doubleValue = Double.parseDouble(valStr);
-                    //         rep[i] = doubleValue;
-                    //     }
-                    //     else if (typeParametre == boolean.class) {
-                    //         boolean booleanValue = Boolean.parseBoolean(valStr);
-                    //         rep[i] = booleanValue;
-                    //     } else if (typeParametre == String.class) {
-                    //         rep[i] = valStr;
-                    //     }
-                    //     else if (typeParametre == Date.class) {
-                    //         String dateFormat = "yyyy-MM-dd";
-                    //         SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
-                    //         Date date = formatter.parse(valStr);
-                    //         rep[i] = date;
-                    //     }
-                    //     // else if (typeParametre == FileUpload.class){
-                    //     //     String enctype = request.getContentType();        
-                    //     //     if (enctype != null && enctype.startsWith("multipart/form-data")) {
-                    //     //         System.out.println("Le formulaire a un attribut 'enctype' de type multipart/form-data.");
-                    //     //         Part filePart = request.getPart(valStr);
-                    //     //         String fileName = Utile.getFileName(filePart);
-                    //     //         byte[] bites = Utile.readBytesFromPart(filePart);
-                    //     //         String filePath = "/home/ravalison/GitHub/byte.txt";
-                    //     //         Utile.writeBytesAndFileNameToFile(bites, fileName, filePath);
-                    //     //         FileUpload fileupload = new FileUpload(fileName, "", bites);
-                    //     //         rep[i] = fileupload;
-                    //     //     } else {
-                    //     //         System.out.println("Le formulaire n'a pas d'attribut 'enctype' de type multipart/form-data.");
-                    //     //     }
-                    //     // }
-                    // }
                     else {
                         rep[i] = null;
                     }
@@ -306,6 +272,18 @@ public class Utile {
                     }
                 }
             }
+        }
+    }
+
+    public static void resetFieldsToDefault(Field[] fields, Object instance) throws IllegalAccessException {
+        try {
+            for (Field field : fields) {
+                field.setAccessible(true);
+                Object defaultValue = field.get(instance);
+                System.out.println(field.getName() + " : " + defaultValue);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
