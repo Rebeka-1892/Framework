@@ -7,8 +7,14 @@ import utilitaire.ModelView;
 public class Emp {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     int age;
     String nom;
+=======
+    String nom = "";
+    int age = 0;
+    FileUpload file = null;
+>>>>>>> Stashed changes
 =======
     String nom = "";
     int age = 0;

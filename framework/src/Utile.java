@@ -135,6 +135,7 @@ public class Utile {
                 if(annotation.annotationType().getSimpleName().equals("Parametre")) {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                     String valStr = request.getParameter(annotation.annotationType().getMethod("nom").invoke(annotation).toString());
                     if(valStr != null) {
                         Class typeParametre = lp[i].getType();
@@ -166,6 +167,8 @@ public class Utile {
                             Date date = formatter.parse(valStr);
                             rep[i] = date;
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
                     String enctype = request.getContentType();        
@@ -212,6 +215,9 @@ public class Utile {
                                 rep[i] = date;
                             }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -306,6 +312,18 @@ public class Utile {
 <<<<<<< Updated upstream
 }
 =======
+
+    public static void resetFieldsToDefault(Field[] fields, Object instance) throws IllegalAccessException {
+        try {
+            for (Field field : fields) {
+                field.setAccessible(true);
+                Object defaultValue = field.get(instance);
+                System.out.println(field.getName() + " : " + defaultValue);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void resetFieldsToDefault(Field[] fields, Object instance) throws IllegalAccessException {
         try {

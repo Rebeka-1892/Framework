@@ -74,6 +74,10 @@ public class FrontServlet extends HttpServlet {
                 Method methode = Utile.getMethod(instance, nomMethode);
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+                ModelView resultat = null;
+>>>>>>> Stashed changes
 =======
                 ModelView resultat = null;
 >>>>>>> Stashed changes
@@ -95,6 +99,7 @@ public class FrontServlet extends HttpServlet {
                         if(methode.invoke(instance) instanceof ModelView){
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                             ModelView resultat = (ModelView) methode.invoke(instance);
                             System.out.println("vita invoke");
 
@@ -106,6 +111,10 @@ public class FrontServlet extends HttpServlet {
                             String vu = resultat.getView();
                             RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
                             dispatcher.forward(request, response);
+=======
+                            resultat = (ModelView) methode.invoke(instance);
+                            System.out.println("vita invoke" + nomMethode);
+>>>>>>> Stashed changes
 =======
                             resultat = (ModelView) methode.invoke(instance);
                             System.out.println("vita invoke" + nomMethode);
