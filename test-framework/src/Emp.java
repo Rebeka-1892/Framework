@@ -3,9 +3,16 @@ package modele;
 import annotation.*;
 import utilitaire.ModelView;
 
+@Scope(type="singleton")
 public class Emp {
+<<<<<<< Updated upstream
     int age;
     String nom;
+=======
+    String nom = "";
+    int age = 0;
+    FileUpload file = null;
+>>>>>>> Stashed changes
 
     public Emp(int age, String nom) {
         this.age = age;
