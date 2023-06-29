@@ -1,9 +1,9 @@
 package modele;
 
-public class Admin{
+public class Modal{
     String nom;
 
-    public Admin(String nom){
+    public Modal(String nom){
         this.nom = nom;
     }
 

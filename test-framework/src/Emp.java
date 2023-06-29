@@ -1,5 +1,4 @@
 package modele;
-import modele.Admin;
 
 import annotation.*;
 import java.util.*;
@@ -132,6 +131,16 @@ public class Emp {
         mod.AddItem("list_emp", employe);
         mod.AddSession("isConnected", true);
         mod.AddSession("admin", "Mr admin");
+        return mod;
+    }
+
+    @Urls(url="do.do")
+    public ModelView JsonParty(){
+        Emp employe = new Emp(1, "Json");
+        ModelView mod = new ModelView();
+        mod.AddItem("list_emp", employe);
+        mod.setIsJson(true);
+
         return mod;
     }
 }
