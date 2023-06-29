@@ -8,6 +8,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+<<<<<<< Updated upstream
+=======
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
+>>>>>>> Stashed changes
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.logging.Level;
@@ -16,12 +21,17 @@ import utilitaire.*;
 
 public class FrontServlet extends HttpServlet {
     HashMap<String,Mapping> MappingUrls;
+    HashMap<String,Object> SingletonMap;
     String baseUrl;
+    String nomSession;
 
     public void init() throws ServletException{
         try {
             baseUrl = getInitParameter("baseUrl");
-            MappingUrls = Utile.getAnnotedUrls(Utile.getClasses(""));
+            nomSession = getInitParameter("sessionName");
+            Vector<Class<?>> vect = Utile.getClasses("");
+            MappingUrls = Utile.getAnnotedUrls(vect);
+            SingletonMap  = Utile.getSingletonClasses(vect);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -32,6 +42,7 @@ public class FrontServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         Utile utile = new Utile();
+        HttpSession session = request.getSession();
         try {
             String url = request.getRequestURL().toString();
             url = utile.getUrl(url, baseUrl);
@@ -47,31 +58,43 @@ public class FrontServlet extends HttpServlet {
 
                 String nomMethode = mapping.getMethod();
 
-                Class<?> classe = Class.forName(nomClasse);
+                Object instance = null;
 
-                Constructor<?> constr = classe.getConstructor();
-                Object instance = constr.newInstance();
+                if(SingletonMap.containsKey(nomClasse)){
+                    instance = SingletonMap.get(nomClasse);
+                    if (instance == null){
+                        Class<?> classe = Class.forName(nomClasse);
+                        Constructor<?> constr = classe.getConstructor();
+                        instance = constr.newInstance();
+                    }
+                    else{
+                        Utile.resetFieldsToDefault(instance.getClass().getDeclaredFields(), instance);
+                    }
+                }
+                else{
+                    Class<?> classe = Class.forName(nomClasse);
+                    Constructor<?> constr = classe.getConstructor();
+                    instance = constr.newInstance();
+                }
 
                 Method methode = Utile.getMethod(instance, nomMethode);
+<<<<<<< Updated upstream
+=======
+                ModelView resultat = null;
+>>>>>>> Stashed changes
                 if (methode != null){
-                    Object[] listeObjets = Utile.getListeObjetsParametres(methode, request);
-                    if(request.getParameterMap()!=null){
-                        Utile.setValue(request, instance);
-                    }
-                    if(listeObjets.length > 0){
-                        if(methode.invoke(instance, listeObjets) instanceof ModelView){
-                            ModelView resultat = (ModelView) methode.invoke(instance, listeObjets);
-                            System.out.println("vita invoke");
-
-                            HashMap<String,Object> rep = resultat.getData();
-                            for(Map.Entry<String,Object> entry: rep.entrySet()){
-                                request.setAttribute(entry.getKey(), entry.getValue());
-                            }
-
-                            String vu = resultat.getView();
-                            RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
-                            dispatcher.forward(request, response);
+                    // if(Utile.AuthentifiedMethod(session, methode, nomSession) == true){
+                        Object[] listeObjets = Utile.getListeObjetsParametres(methode, request);
+                        if(request.getParameterMap()!=null){
+                            Utile.setValue(request, instance);
                         }
+                        if(listeObjets.length > 0){
+                            if(methode.invoke(instance, listeObjets) instanceof ModelView){
+                                resultat = (ModelView) methode.invoke(instance, listeObjets);
+                                // System.out.println("vita invoke");
+                            }
+                        }
+<<<<<<< Updated upstream
                     }
                     else{
                         if(methode.invoke(instance) instanceof ModelView){
@@ -81,13 +104,34 @@ public class FrontServlet extends HttpServlet {
                             HashMap<String,Object> rep = resultat.getData();
                             for(Map.Entry<String,Object> entry: rep.entrySet()){
                                 request.setAttribute(entry.getKey(), entry.getValue());
+=======
+                        else{
+                            if(methode.invoke(instance) instanceof ModelView){
+                                resultat = (ModelView) methode.invoke(instance);
+                                // System.out.println("vita invoke" + nomMethode);
+>>>>>>> Stashed changes
                             }
-
-                            String vu = resultat.getView();
-                            RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
-                            dispatcher.forward(request, response);
+                        }   
+                        HashMap<String,Object> rep = resultat.getData();
+                        for(Map.Entry<String,Object> entry: rep.entrySet()){
+                            request.setAttribute(entry.getKey(), entry.getValue());
                         }
-                    }               
+
+                        Utile.setSession(resultat.getSession(), session);
+                        Utile.setModeleSession(instance, methode, session);
+
+
+                        if(Utile.AuthentifiedMethod(session, methode, nomSession) == false){
+                            throw new Exception("Il y a une erreur, identifiez-vous");
+                        }
+
+                        String vu = resultat.getView();
+                        RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
+                        dispatcher.forward(request, response);  
+                    // }
+                    // else{
+                    //     throw new Exception("Il y a une erreur, identifiez-vous");
+                    // }                              
                 }
             }
         } catch (Exception ex) {
