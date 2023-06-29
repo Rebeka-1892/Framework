@@ -8,20 +8,33 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+<<<<<<< Updated upstream
+=======
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
+>>>>>>> Stashed changes
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utilitaire.*;
+import com.google.gson.Gson;
+
 
 public class FrontServlet extends HttpServlet {
     HashMap<String,Mapping> MappingUrls;
+    HashMap<String,Object> SingletonMap;
     String baseUrl;
+    String nomSession;
+    Gson gson = new Gson();
 
     public void init() throws ServletException{
         try {
             baseUrl = getInitParameter("baseUrl");
-            MappingUrls = Utile.getAnnotedUrls(Utile.getClasses(""));
+            nomSession = getInitParameter("sessionName");
+            Vector<Class<?>> vect = Utile.getClasses("");
+            MappingUrls = Utile.getAnnotedUrls(vect);
+            SingletonMap  = Utile.getSingletonClasses(vect);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -32,6 +45,7 @@ public class FrontServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         Utile utile = new Utile();
+        HttpSession session = request.getSession();
         try {
             String url = request.getRequestURL().toString();
             url = utile.getUrl(url, baseUrl);
@@ -41,33 +55,58 @@ public class FrontServlet extends HttpServlet {
                 throw new Exception("Tsy misy");
             }
             else{
-                Mapping mapping = MappingUrls.get(url);
-                    
+                Mapping mapping = MappingUrls.get(url);                    
                 String nomClasse = mapping.getClassName();
-
                 String nomMethode = mapping.getMethod();
 
-                Class<?> classe = Class.forName(nomClasse);
+                Object instance = null;
 
-                Constructor<?> constr = classe.getConstructor();
-                Object instance = constr.newInstance();
+                if(SingletonMap.containsKey(nomClasse)){
+                    instance = SingletonMap.get(nomClasse);
+                    if (instance == null){
+                        Class<?> classe = Class.forName(nomClasse);
+                        Constructor<?> constr = classe.getConstructor();
+                        instance = constr.newInstance();
+                    }
+                    else{
+                        Utile.resetFieldsToDefault(instance.getClass().getDeclaredFields(), instance);
+                    }
+                }
+                else{
+                    Class<?> classe = Class.forName(nomClasse);
+                    Constructor<?> constr = classe.getConstructor();
+                    instance = constr.newInstance();
+                }
 
                 Method methode = Utile.getMethod(instance, nomMethode);
+<<<<<<< Updated upstream
+=======
+                ModelView resultat = null;
+                Object objet = new Object();
+>>>>>>> Stashed changes
                 if (methode != null){
                     Object[] listeObjets = Utile.getListeObjetsParametres(methode, request);
                     if(request.getParameterMap()!=null){
                         Utile.setValue(request, instance);
                     }
+                    
                     if(listeObjets.length > 0){
-                        if(methode.invoke(instance, listeObjets) instanceof ModelView){
-                            ModelView resultat = (ModelView) methode.invoke(instance, listeObjets);
-                            System.out.println("vita invoke");
+                        objet = methode.invoke(instance, listeObjets);
+                    }
+                    else{
+                        objet = methode.invoke(instance);
+                    }
 
-                            HashMap<String,Object> rep = resultat.getData();
+                    if(objet instanceof ModelView){
+                        resultat = (ModelView) objet;
+                        HashMap<String,Object> rep = resultat.getData();
+                        System.out.println("isJson " + resultat.getIsJson());
+                        if(resultat.getIsJson() == false){
                             for(Map.Entry<String,Object> entry: rep.entrySet()){
                                 request.setAttribute(entry.getKey(), entry.getValue());
                             }
 
+<<<<<<< Updated upstream
                             String vu = resultat.getView();
                             RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
                             dispatcher.forward(request, response);
@@ -77,17 +116,33 @@ public class FrontServlet extends HttpServlet {
                         if(methode.invoke(instance) instanceof ModelView){
                             ModelView resultat = (ModelView) methode.invoke(instance);
                             System.out.println("vita invoke");
+=======
+                            Utile.setSession(resultat.getSession(), session);
+                            Utile.setModeleSession(instance, methode, session);
+>>>>>>> Stashed changes
 
-                            HashMap<String,Object> rep = resultat.getData();
-                            for(Map.Entry<String,Object> entry: rep.entrySet()){
-                                request.setAttribute(entry.getKey(), entry.getValue());
+
+                            if(Utile.AuthentifiedMethod(session, methode, nomSession) == false){
+                                throw new Exception("Il y a une erreur, identifiez-vous");
                             }
 
                             String vu = resultat.getView();
                             RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
                             dispatcher.forward(request, response);
                         }
-                    }               
+                        else{
+                            response.setContentType("text/json;charset=UTF-8");   
+                            String json = gson.toJson(resultat.getData());
+                            System.out.println(json);
+                            out.print(json);
+                        }
+                    }
+                    else{
+                        response.setContentType("text/json;charset=UTF-8");   
+                        String json = gson.toJson(objet);
+                        System.out.println(json);
+                        out.print(json);
+                    }
                 }
             }
         } catch (Exception ex) {
