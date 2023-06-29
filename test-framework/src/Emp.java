@@ -135,7 +135,10 @@ public class Emp {
         return mod;
     }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 
     @Urls(url="do.do")
     public ModelView JsonParty(){

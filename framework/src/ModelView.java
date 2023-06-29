@@ -5,6 +5,10 @@ public class ModelView {
     String view;
     HashMap<String,Object> data;
     HashMap<String,Object> session;
+<<<<<<< Updated upstream
+=======
+    boolean isJson = false;
+>>>>>>> Stashed changes
 
     public ModelView(String view, HashMap<String,Object> data) {
         this.data = data;
@@ -29,6 +33,14 @@ public class ModelView {
 
     public void setView(String view) {
         this.view = view;
+    } 
+
+    public boolean getIsJson() {
+        return isJson;
+    }
+
+    public void setIsJson(boolean isJson) {
+        this.isJson = isJson;
     } 
 
     public HashMap<String,Object> getData() {

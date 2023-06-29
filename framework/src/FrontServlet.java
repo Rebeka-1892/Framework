@@ -16,6 +16,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utilitaire.*;
+import com.google.gson.Gson;
+
 
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024, // Taille limite avant écriture sur le disque (1 Mo)
@@ -28,6 +30,10 @@ public class FrontServlet extends HttpServlet {
     HashMap<String,Object> SingletonMap;
     String baseUrl;
     String nomSession;
+<<<<<<< Updated upstream
+=======
+    Gson gson = new Gson();
+>>>>>>> Stashed changes
 
     public void init() throws ServletException{
         try {
@@ -56,10 +62,8 @@ public class FrontServlet extends HttpServlet {
                 throw new Exception("Tsy misy");
             }
             else{
-                Mapping mapping = MappingUrls.get(url);
-                    
+                Mapping mapping = MappingUrls.get(url);                    
                 String nomClasse = mapping.getClassName();
-
                 String nomMethode = mapping.getMethod();
 
                 Object instance = null;
@@ -83,6 +87,7 @@ public class FrontServlet extends HttpServlet {
 
                 Method methode = Utile.getMethod(instance, nomMethode);
                 ModelView resultat = null;
+<<<<<<< Updated upstream
                 if (methode != null){
                     // if(Utile.AuthentifiedMethod(session, methode, nomSession) == true){
                         Object[] listeObjets = Utile.getListeObjetsParametres(methode, request);
@@ -99,6 +104,37 @@ public class FrontServlet extends HttpServlet {
                             if(methode.invoke(instance) instanceof ModelView){
                                 resultat = (ModelView) methode.invoke(instance);
                                 // System.out.println("vita invoke" + nomMethode);
+=======
+                Object objet = new Object();
+                if (methode != null){
+                    Object[] listeObjets = Utile.getListeObjetsParametres(methode, request);
+                    if(request.getParameterMap()!=null){
+                        Utile.setValue(request, instance);
+                    }
+                    
+                    if(listeObjets.length > 0){
+                        objet = methode.invoke(instance, listeObjets);
+                    }
+                    else{
+                        objet = methode.invoke(instance);
+                    }
+
+                    if(objet instanceof ModelView){
+                        resultat = (ModelView) objet;
+                        HashMap<String,Object> rep = resultat.getData();
+                        System.out.println("isJson " + resultat.getIsJson());
+                        if(resultat.getIsJson() == false){
+                            for(Map.Entry<String,Object> entry: rep.entrySet()){
+                                request.setAttribute(entry.getKey(), entry.getValue());
+                            }
+
+                            Utile.setSession(resultat.getSession(), session);
+                            Utile.setModeleSession(instance, methode, session);
+
+
+                            if(Utile.AuthentifiedMethod(session, methode, nomSession) == false){
+                                throw new Exception("Il y a une erreur, identifiez-vous");
+>>>>>>> Stashed changes
                             }
                         }   
                         HashMap<String,Object> rep = resultat.getData();
@@ -114,6 +150,7 @@ public class FrontServlet extends HttpServlet {
                             throw new Exception("Il y a une erreur, identifiez-vous");
                         }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
                         String vu = resultat.getView();
                         RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
@@ -123,6 +160,14 @@ public class FrontServlet extends HttpServlet {
                     //     throw new Exception("Il y a une erreur, identifiez-vous");
                     // }                              
 =======
+=======
+                        else{
+                            response.setContentType("text/json;charset=UTF-8");   
+                            String json = gson.toJson(resultat.getData());
+                            System.out.println(json);
+                            out.print(json);
+                        }
+>>>>>>> Stashed changes
                     }
                     else{
                         response.setContentType("text/json;charset=UTF-8");   
@@ -130,6 +175,9 @@ public class FrontServlet extends HttpServlet {
                         System.out.println(json);
                         out.print(json);
                     }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
                 }
             }
