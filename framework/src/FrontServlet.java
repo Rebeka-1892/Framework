@@ -9,6 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.lang.reflect.*;
 import java.util.*;
@@ -26,10 +27,12 @@ public class FrontServlet extends HttpServlet {
     HashMap<String,Mapping> MappingUrls;
     HashMap<String,Object> SingletonMap;
     String baseUrl;
+    String nomSession;
 
     public void init() throws ServletException{
         try {
             baseUrl = getInitParameter("baseUrl");
+            nomSession = getInitParameter("sessionName");
             Vector<Class<?>> vect = Utile.getClasses("");
             MappingUrls = Utile.getAnnotedUrls(vect);
             SingletonMap  = Utile.getSingletonClasses(vect);
@@ -43,6 +46,7 @@ public class FrontServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         Utile utile = new Utile();
+        HttpSession session = request.getSession();
         try {
             String url = request.getRequestURL().toString();
             url = utile.getUrl(url, baseUrl);
@@ -76,36 +80,45 @@ public class FrontServlet extends HttpServlet {
                     Constructor<?> constr = classe.getConstructor();
                     instance = constr.newInstance();
                 }
-                
-                // Utile.resetFieldsToDefault(instance.getClass().getDeclaredFields(), instance);
 
                 Method methode = Utile.getMethod(instance, nomMethode);
                 ModelView resultat = null;
                 if (methode != null){
-                    Object[] listeObjets = Utile.getListeObjetsParametres(methode, request);
-                    if(request.getParameterMap()!=null){
-                        Utile.setValue(request, instance);
-                    }
-                    if(listeObjets.length > 0){
-                        if(methode.invoke(instance, listeObjets) instanceof ModelView){
-                            resultat = (ModelView) methode.invoke(instance, listeObjets);
-                            System.out.println("vita invoke");
+                    // if(Utile.AuthentifiedMethod(session, methode, nomSession) == true){
+                        Object[] listeObjets = Utile.getListeObjetsParametres(methode, request);
+                        if(request.getParameterMap()!=null){
+                            Utile.setValue(request, instance);
                         }
-                    }
-                    else{
-                        if(methode.invoke(instance) instanceof ModelView){
-                            resultat = (ModelView) methode.invoke(instance);
-                            System.out.println("vita invoke" + nomMethode);
+                        if(listeObjets.length > 0){
+                            if(methode.invoke(instance, listeObjets) instanceof ModelView){
+                                resultat = (ModelView) methode.invoke(instance, listeObjets);
+                                // System.out.println("vita invoke");
+                            }
                         }
-                    }   
-                    HashMap<String,Object> rep = resultat.getData();
-                    for(Map.Entry<String,Object> entry: rep.entrySet()){
-                        request.setAttribute(entry.getKey(), entry.getValue());
-                    }
+                        else{
+                            if(methode.invoke(instance) instanceof ModelView){
+                                resultat = (ModelView) methode.invoke(instance);
+                                // System.out.println("vita invoke" + nomMethode);
+                            }
+                        }   
+                        HashMap<String,Object> rep = resultat.getData();
+                        for(Map.Entry<String,Object> entry: rep.entrySet()){
+                            request.setAttribute(entry.getKey(), entry.getValue());
+                        }
 
-                    String vu = resultat.getView();
-                    RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
-                    dispatcher.forward(request, response);            
+                        Utile.setSession(resultat.getSession(), session);
+
+                        if(Utile.AuthentifiedMethod(session, methode, nomSession) == false){
+                            throw new Exception("Il y a une erreur, identifiez-vous");
+                        }
+
+                        String vu = resultat.getView();
+                        RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
+                        dispatcher.forward(request, response);  
+                    // }
+                    // else{
+                    //     throw new Exception("Il y a une erreur, identifiez-vous");
+                    // }                              
                 }
             }
         } catch (Exception ex) {

@@ -1,3 +1,4 @@
+SPRINT10: singleton
 - verifier si singleton (cad @scope("singleton")) sinon (@scope(normal/others))
 - si singleton mamorona HashMap<String nomclass, Object classe> de jerena oe 
 efa misy instance ve, sinon micreer vavao
@@ -5,5 +6,21 @@ efa misy instance ve, sinon micreer vavao
 - atao anaty HashMap<String nomclass, Object classe> ze singleton, verifiena oe efa ao ve, rah ao de averina valeur par defaut n attribut any, 
 rah tsy mbola ao de micreer vavao
 - ze tsy singleton atao otran taloh iany
-
 fonction maka singleton de atao anaty HashMap
+
+SPRINT11: Session
+- annotation: Auth profile
+- web.xml asina anarana le Session
+- fonction maka session rehetra atao anaty Httpsession an FrontServlet
+- si annoted auth de alaina session
+- maka valeur anle profil de rah misy session mtovy anarana aminy de tafiditra amle methode izy
+- fonction oe rah annote auth izy ka mtovy anarana amle session anaty web.xml de tafiditra amle methode
+- mijery loh oe le fonction ve annote auth
+
+SPRINT13: Json
+- modelview: boolean isJson=false
+- ref true de alaina daol ny data de alefa ao amn frontservlet de atao out.print, firecuperena datat librairie gson
+
+SPRINT14: Json
+- annotation Json
+- otran 13

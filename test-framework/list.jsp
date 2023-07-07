@@ -13,9 +13,14 @@
     <title>Formulaire</title>
 </head>
 <body>
+    
     <h1>Ajout employe</h1>
     <% for(int i=0; i<list.length; i++){ %>
         <h4><a href="/testfw/emp_by_id.do?id=<%= list[i].getage()%>"> <%= list[i].getnom()%> </a></h4>
     <% } %>
+
+    <div><a href="/testfw/loginadmin.do">Login Admin</a></div>
+    <div><a href="/testfw/login.do">Login</a></div>
+
 </body>
 </html>

@@ -3,6 +3,7 @@ package utilitaire;
 import annotation.*;
 import etu1892.framework.Mapping;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.io.File;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Field;
@@ -51,9 +52,9 @@ public class Utile {
                     value = urls.url();
                     method = meth.getName();
                     mapping = new Mapping(className, method);
-                    System.out.println(className + " " + method);
+                    // System.out.println(className + " " + method);
                     reponse.put(value, mapping);
-                    System.out.println(value + " " + mapping.getClassName());
+                    // System.out.println(value + " " + mapping.getClassName());
                 }
             }
         }
@@ -82,8 +83,38 @@ public class Utile {
                 }
             }
         }
-
         return singletonClasses;
+    }
+
+    public static void setSession(HashMap<String, Object> map, HttpSession session){
+        for(Map.Entry<String,Object> entry: map.entrySet()){
+            session.setAttribute(entry.getKey(), entry.getValue());
+            System.out.println("Napiditra");
+        }
+    }
+
+    public static boolean AuthentifiedMethod(HttpSession session, Method method, String nomSession) {
+        if(method.isAnnotationPresent(Auth.class)){
+            Auth authAnnotation = method.getAnnotation(Auth.class);
+            String profile = authAnnotation.profile();
+            System.out.println("profile " + profile);
+            if(profile.compareTo("")==0){
+                if(session.getAttribute(nomSession)!=null){
+                    System.out.println("vide");
+                    return true;
+                }
+            }
+            else{
+                if(session.getAttribute(profile)!=null){
+                    System.out.println("pas vide");
+                    return true;
+                }
+            }                
+            System.out.println("false zany");
+            return false;
+        }
+        System.out.println("tsisy");
+        return true;
     }
 
     public static Vector<Class<?>> getClasses(String packageName) throws ClassNotFoundException {
@@ -138,15 +169,15 @@ public class Utile {
 
         Map<String, String[]> parameterMap = request.getParameterMap();
         for (int i = 0; i < lp.length; i++) {
-            System.out.println("isNamePresent "+lp[i].isNamePresent());
-            System.out.println("nom param "+ lp[i].getName());
+            // System.out.println("isNamePresent "+lp[i].isNamePresent());
+            // System.out.println("nom param "+ lp[i].getName());
             Annotation[] annotes=lp[i].getAnnotations();
             for (Annotation annotation : annotes) {
                 if(annotation.annotationType().getSimpleName().equals("Parametre")) {
                     String enctype = request.getContentType();        
                     if (enctype != null && enctype.startsWith("multipart/form-data")) {
                         Part filePart = request.getPart(annotation.annotationType().getMethod("nom").invoke(annotation).toString());
-                        System.out.println("Le formulaire a un attribut 'enctype' de type multipart/form-data.");
+                        // System.out.println("Le formulaire a un attribut 'enctype' de type multipart/form-data.");
                         String fileName = Utile.getFileName(filePart);
                         byte[] bites = Utile.readBytesFromPart(filePart);
                         String filePath = "/home/ravalison/GitHub/byte.txt";
@@ -155,7 +186,7 @@ public class Utile {
                         rep[i] = fileupload;
                     } else if (enctype == null) {
                         String valStr = request.getParameter(annotation.annotationType().getMethod("nom").invoke(annotation).toString());
-                        System.out.println("Le formulaire n'a pas d'attribut 'enctype' de type multipart/form-data.");
+                        // System.out.println("Le formulaire n'a pas d'attribut 'enctype' de type multipart/form-data.");
                         if(valStr != null) {
                             Class typeParametre = lp[i].getType();
                             if (typeParametre == int.class) {
@@ -220,14 +251,14 @@ public class Utile {
                     
                     if(typeParametre == int.class){
                         for (String paramValue : paramValues) {
-                            System.out.println("int");
+                            // System.out.println("int");
                             int value = Integer.parseInt(paramValue);
                             field.set(obj, value);
                         }
                     }
                     if(typeParametre == Integer.class){
                         for (String paramValue : paramValues) {
-                            System.out.println("int");
+                            // System.out.println("int");
                             Integer value = Integer.parseInt(paramValue);
                             field.set(obj, value);
                         }
@@ -280,7 +311,7 @@ public class Utile {
             for (Field field : fields) {
                 field.setAccessible(true);
                 Object defaultValue = field.get(instance);
-                System.out.println(field.getName() + " : " + defaultValue);
+                // System.out.println(field.getName() + " : " + defaultValue);
             }
         } catch (Exception e) {
             e.printStackTrace();

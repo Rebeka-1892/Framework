@@ -7,6 +7,10 @@
             <param-name>baseUrl</param-name>
             <param-value>http://localhost:8081/testfw/</param-value>
         </init-param>
+        <init-param>
+            <param-name>sessionName</param-name>
+            <param-value>isConnected</param-value>
+        </init-param>
         <servlet-name>FrontServlet</servlet-name>
         <servlet-class>etu1892.framework.servlet.FrontServlet</servlet-class>
     </servlet>
