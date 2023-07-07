@@ -3,17 +3,13 @@ import modele.Admin;
 
 import annotation.*;
 import utilitaire.ModelView;
+import utilitaire.FileUpload;
 
 @Scope(type="singleton")
 public class Emp {
-<<<<<<< Updated upstream
-    int age;
-    String nom;
-=======
     String nom = "";
     int age = 0;
     FileUpload file = null;
->>>>>>> Stashed changes
 
     public Emp(int age, String nom) {
         this.age = age;
@@ -39,16 +35,16 @@ public class Emp {
         this.age = age;
     }
     
-    @Urls(url="emp_all")
+    @Urls(url="emp_all.do")
     public ModelView findAll(){
-        Emp employe = new Emp(7, "Olona Miasa");
+        Emp employe = new Emp(1, "Olona 1");
 
         ModelView mod = new ModelView("emp_all.jsp");
         mod.AddItem("list_emp", employe);
         return mod;
     }
 
-    @Urls(url="emp_save")
+    @Urls(url="emp_save.do")
     public ModelView Save(){
         System.out.println("Age: " + getage());
         Emp employe = new Emp(getage(), getnom());
@@ -58,17 +54,12 @@ public class Emp {
         return mod;
     }
 
-    @Urls(url="emp_by_id")
+    @Urls(url="emp_by_id.do")
     public ModelView FindById(@Parametre(nom = "id") int id) throws Exception{
-        Emp employe = new Emp(77, "Tonga");
+        Emp employe = new Emp(id, "no id");
 
         ModelView mod = new ModelView("display.jsp");
         mod.AddItem("list_emp", employe);
-<<<<<<< Updated upstream
-
-        ModelView modele = new ModelView("emp_all.jsp", mod.getData());
-        return modele;
-=======
         return mod;
     }
 
@@ -121,6 +112,5 @@ public class Emp {
         mod.AddSession("isConnected", true);
         mod.AddSession("admin", "Mr admin");
         return mod;
->>>>>>> Stashed changes
     }
 }

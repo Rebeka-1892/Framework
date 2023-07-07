@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>Ajout employe</h1>
-    <form action="/testfw/emp_save" method="post">
+    <form action="/testfw/emp_save.do" method="post">
         <input type="text" name="nom" placeholder="nom">
         <input type="text" name="age" placeholder="age">
         <input type="submit" value="Valider">
