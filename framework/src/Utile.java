@@ -21,6 +21,15 @@ import java.util.Date;
 import java.sql.*;
 import java.lang.reflect.*;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Part;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Utile {
     public String getUrl(String url, String baseUrl) throws Exception{
@@ -181,6 +190,7 @@ public class Utile {
         } else {
             throw new ClassNotFoundException(packageName + " does not appear to be a valid package");
         }
+        System.out.println("isan classe " + classes.size());
         return classes;
     }
 
@@ -195,38 +205,6 @@ public class Utile {
             Annotation[] annotes=lp[i].getAnnotations();
             for (Annotation annotation : annotes) {
                 if(annotation.annotationType().getSimpleName().equals("Parametre")) {
-<<<<<<< Updated upstream
-                    String valStr = request.getParameter(annotation.annotationType().getMethod("nom").invoke(annotation).toString());
-                    if(valStr != null) {
-                        Class typeParametre = lp[i].getType();
-                        if (typeParametre == int.class) {
-                            int intValue = Integer.parseInt(valStr);
-                            rep[i] = intValue;
-                        }
-                        else if (typeParametre == Integer.class) {
-                            Integer intValue = Integer.parseInt(valStr);
-                            rep[i] = intValue;
-                        }
-                        else if (typeParametre == double.class) {
-                            double doubleValue = Double.parseDouble(valStr);
-                            rep[i] = doubleValue;
-                        }
-                        else if (typeParametre == Double.class) {
-                            Double doubleValue = Double.parseDouble(valStr);
-                            rep[i] = doubleValue;
-                        }
-                        else if (typeParametre == boolean.class) {
-                            boolean booleanValue = Boolean.parseBoolean(valStr);
-                            rep[i] = booleanValue;
-                        } else if (typeParametre == String.class) {
-                            rep[i] = valStr;
-                        }
-                        else if (typeParametre == Date.class) {
-                            String dateFormat = "yyyy-MM-dd";
-                            SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
-                            Date date = formatter.parse(valStr);
-                            rep[i] = date;
-=======
                     String enctype = request.getContentType();        
                     if (enctype != null && enctype.startsWith("multipart/form-data")) {
                         Part filePart = request.getPart(annotation.annotationType().getMethod("nom").invoke(annotation).toString());
@@ -270,7 +248,6 @@ public class Utile {
                                 Date date = formatter.parse(valStr);
                                 rep[i] = date;
                             }
->>>>>>> Stashed changes
                         }
                     }
                     else {
@@ -359,9 +336,6 @@ public class Utile {
             }
         }
     }
-<<<<<<< Updated upstream
-}
-=======
 
     public static void resetFieldsToDefault(Field[] fields, Object instance) throws IllegalAccessException {
         try {
@@ -405,4 +379,3 @@ public class Utile {
         }
     }
 }
->>>>>>> Stashed changes

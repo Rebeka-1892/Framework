@@ -1,5 +1,6 @@
 package etu1892.framework.servlet;
 
+import jakarta.servlet.annotation.MultipartConfig;
 import etu1892.framework.Mapping;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
@@ -8,11 +9,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-<<<<<<< Updated upstream
-=======
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
->>>>>>> Stashed changes
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.logging.Level;
@@ -20,6 +18,12 @@ import java.util.logging.Logger;
 import utilitaire.*;
 import com.google.gson.Gson;
 
+
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024, // Taille limite avant écriture sur le disque (1 Mo)
+    maxFileSize = 1024 * 1024 * 10, // Taille maximale des fichiers (10 Mo)
+    maxRequestSize = 1024 * 1024 * 50 // Taille maximale de la requête (50 Mo)
+)
 
 public class FrontServlet extends HttpServlet {
     HashMap<String,Mapping> MappingUrls;
@@ -79,11 +83,8 @@ public class FrontServlet extends HttpServlet {
                 }
 
                 Method methode = Utile.getMethod(instance, nomMethode);
-<<<<<<< Updated upstream
-=======
                 ModelView resultat = null;
                 Object objet = new Object();
->>>>>>> Stashed changes
                 if (methode != null){
                     Object[] listeObjets = Utile.getListeObjetsParametres(methode, request);
                     if(request.getParameterMap()!=null){
@@ -106,20 +107,8 @@ public class FrontServlet extends HttpServlet {
                                 request.setAttribute(entry.getKey(), entry.getValue());
                             }
 
-<<<<<<< Updated upstream
-                            String vu = resultat.getView();
-                            RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
-                            dispatcher.forward(request, response);
-                        }
-                    }
-                    else{
-                        if(methode.invoke(instance) instanceof ModelView){
-                            ModelView resultat = (ModelView) methode.invoke(instance);
-                            System.out.println("vita invoke");
-=======
                             Utile.setSession(resultat.getSession(), session);
                             Utile.setModeleSession(instance, methode, session);
->>>>>>> Stashed changes
 
 
                             if(Utile.AuthentifiedMethod(session, methode, nomSession) == false){

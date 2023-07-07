@@ -6,7 +6,7 @@ to_project="../../test-framework/src"
 framework_name="fw.jar"
 project_name="testfw.war"
 
-javac -parameters -d $to_build $compile_source
+javac -d $to_build $compile_source
 
 cd $to_build
 
@@ -16,7 +16,7 @@ cp $framework_name $to_lib
 
 cd $to_project
 
-javac -d . *.java
+javac -d ../WEB-INF/classes *.java
 
 cd ..
 
