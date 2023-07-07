@@ -2,6 +2,7 @@ package modele;
 import modele.Admin;
 
 import annotation.*;
+import java.util.*;
 import utilitaire.ModelView;
 import utilitaire.FileUpload;
 
@@ -10,6 +11,7 @@ public class Emp {
     String nom = "";
     int age = 0;
     FileUpload file = null;
+    HashMap<String,Object> session;
 
     public Emp(int age, String nom) {
         this.age = age;
@@ -34,10 +36,30 @@ public class Emp {
     public void setage(int age){
         this.age = age;
     }
+
+    public HashMap<String,Object> getSession() {
+        if( this.session == null){
+            this.session = new HashMap<String,Object>();
+        }
+        return session;
+    }
+
+    public void AddSession(String key, Object value){
+        if( this.session == null){
+            this.session = new HashMap<String,Object>();
+        }
+        System.out.println("Key " + key + " value " + value);
+        this.session.put(key, value);
+    } 
     
+    @Session
     @Urls(url="emp_all.do")
     public ModelView findAll(){
         Emp employe = new Emp(1, "Olona 1");
+
+        for(Map.Entry<String,Object> entry: getSession().entrySet()){
+            System.out.println(entry.getKey() + " " + entry.getValue());
+        }
 
         ModelView mod = new ModelView("emp_all.jsp");
         mod.AddItem("list_emp", employe);
@@ -46,7 +68,6 @@ public class Emp {
 
     @Urls(url="emp_save.do")
     public ModelView Save(){
-        System.out.println("Age: " + getage());
         Emp employe = new Emp(getage(), getnom());
 
         ModelView mod = new ModelView("emp_all.jsp");

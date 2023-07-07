@@ -107,6 +107,8 @@ public class FrontServlet extends HttpServlet {
                         }
 
                         Utile.setSession(resultat.getSession(), session);
+                        Utile.setModeleSession(instance, methode, session);
+
 
                         if(Utile.AuthentifiedMethod(session, methode, nomSession) == false){
                             throw new Exception("Il y a une erreur, identifiez-vous");

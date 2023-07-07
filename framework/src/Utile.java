@@ -93,6 +93,37 @@ public class Utile {
         }
     }
 
+    public static void setModeleSession (Object object, Method methode, HttpSession httpSession) throws Exception{
+        if(methode.isAnnotationPresent(Session.class)){
+            Session session = (Session) methode.getAnnotation(Session.class);
+            if (session != null) { // mila session
+                Class clazz = methode.getDeclaringClass();
+                try {
+                    Field sess = clazz.getDeclaredField("session");
+                    sess.setAccessible(true);
+
+                    HashMap<String, Object> attrSessionValue = new HashMap<String,Object>();
+
+                    Enumeration<String> attributeNames = httpSession.getAttributeNames();
+
+                    while (attributeNames.hasMoreElements()) {
+                        String attributeName = attributeNames.nextElement();
+                        Object attributeValue = httpSession.getAttribute(attributeName);
+                        attrSessionValue.put(attributeName, attributeValue);
+                    }
+
+                    sess.set(object, attrSessionValue);
+                    System.out.println(attrSessionValue.size() + " session attribue dans la methode " + methode.getName());
+
+                } catch (Exception e) {
+                    throw new Exception("la methode " + methode.getName()
+                            + " utilise la session cependant la classe declarante " + clazz.getSimpleName()
+                            + " ne contient pas d'attribut HashMap<String, Object> session pour stocker la session");
+                }
+            }
+        }
+    }
+
     public static boolean AuthentifiedMethod(HttpSession session, Method method, String nomSession) {
         if(method.isAnnotationPresent(Auth.class)){
             Auth authAnnotation = method.getAnnotation(Auth.class);

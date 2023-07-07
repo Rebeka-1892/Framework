@@ -39,7 +39,8 @@ public class ModelView {
         this.data = data;
     }
 
-    public HashMap<String,Object> getSession() {if( this.session == null){
+    public HashMap<String,Object> getSession() {
+        if( this.session == null){
             session = new HashMap<String,Object>();
         }
 

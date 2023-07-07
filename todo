@@ -17,6 +17,9 @@ SPRINT11: Session
 - fonction oe rah annote auth izy ka mtovy anarana amle session anaty web.xml de tafiditra amle methode
 - mijery loh oe le fonction ve annote auth
 
+SPRINT12: Session
+- asina hashmap session anaty modele de ref instance iny de alaina ny session servlet de atsofoka ao
+
 SPRINT13: Json
 - modelview: boolean isJson=false
 - ref true de alaina daol ny data de alefa ao amn frontservlet de atao out.print, firecuperena datat librairie gson
