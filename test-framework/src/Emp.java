@@ -143,4 +143,14 @@ public class Emp {
 
         return mod;
     }
+
+    @Json
+    @Urls(url="json.do")
+    public Emp[] json(){
+        Emp[] employe = new Emp[3];
+        employe[0] = new Emp(1, "XD");
+        employe[1] = new Emp(2, ":(");
+        employe[2] = new Emp(3, ";p");
+        return employe;
+    }
 }

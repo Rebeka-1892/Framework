@@ -126,6 +126,12 @@ public class FrontServlet extends HttpServlet {
                             out.print(json);
                         }
                     }
+                    else{
+                        response.setContentType("text/json;charset=UTF-8");   
+                        String json = gson.toJson(objet);
+                        System.out.println(json);
+                        out.print(json);
+                    }
                 }
             }
         } catch (Exception ex) {
