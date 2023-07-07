@@ -15,7 +15,7 @@ Par exemple:
 
 5) Vous devez avoir un constructeur vide dans chaque controlleur
 
-6) N'oubliez d'ajouter vos getters et setters
+6) N'oubliez pas d'ajouter vos getters et setters
 
 7) Si vous voulez creer une methode dans votre controlleur, il faut qu'elle soit annotee et retourne un ModelView
 Pour annoter, vous n'avez pas besoin de mettre "/" au debut de votre annotation

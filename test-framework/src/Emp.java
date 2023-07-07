@@ -4,18 +4,14 @@ import modele.Admin;
 import annotation.*;
 import java.util.*;
 import utilitaire.ModelView;
+import utilitaire.FileUpload;
 
 @Scope(type="singleton")
 public class Emp {
-<<<<<<< Updated upstream
-    int age;
-    String nom;
-=======
     String nom = "";
     int age = 0;
     FileUpload file = null;
     HashMap<String,Object> session;
->>>>>>> Stashed changes
 
     public Emp(int age, String nom) {
         this.age = age;
@@ -56,14 +52,10 @@ public class Emp {
         this.session.put(key, value);
     } 
     
-<<<<<<< Updated upstream
-    @Urls(url="emp_all")
-=======
     @Session
     @Urls(url="emp_all.do")
->>>>>>> Stashed changes
     public ModelView findAll(){
-        Emp employe = new Emp(7, "Olona Miasa");
+        Emp employe = new Emp(1, "Olona 1");
 
         for(Map.Entry<String,Object> entry: getSession().entrySet()){
             System.out.println(entry.getKey() + " " + entry.getValue());
@@ -74,7 +66,7 @@ public class Emp {
         return mod;
     }
 
-    @Urls(url="emp_save")
+    @Urls(url="emp_save.do")
     public ModelView Save(){
         Emp employe = new Emp(getage(), getnom());
 
@@ -83,17 +75,12 @@ public class Emp {
         return mod;
     }
 
-    @Urls(url="emp_by_id")
+    @Urls(url="emp_by_id.do")
     public ModelView FindById(@Parametre(nom = "id") int id) throws Exception{
-        Emp employe = new Emp(77, "Tonga");
+        Emp employe = new Emp(id, "no id");
 
         ModelView mod = new ModelView("display.jsp");
         mod.AddItem("list_emp", employe);
-<<<<<<< Updated upstream
-
-        ModelView modele = new ModelView("emp_all.jsp", mod.getData());
-        return modele;
-=======
         return mod;
     }
 
@@ -146,6 +133,5 @@ public class Emp {
         mod.AddSession("isConnected", true);
         mod.AddSession("admin", "Mr admin");
         return mod;
->>>>>>> Stashed changes
     }
 }
