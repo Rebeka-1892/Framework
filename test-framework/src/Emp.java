@@ -134,4 +134,27 @@ public class Emp {
         mod.AddSession("admin", "Mr admin");
         return mod;
     }
+<<<<<<< Updated upstream
+=======
+
+    @Urls(url="do.do")
+    public ModelView JsonParty(){
+        Emp employe = new Emp(1, "Json");
+        ModelView mod = new ModelView();
+        mod.AddItem("list_emp", employe);
+        mod.setIsJson(true);
+
+        return mod;
+    }
+
+    @Json
+    @Urls(url="json.do")
+    public Emp[] json(){
+        Emp[] employe = new Emp[3];
+        employe[0] = new Emp(1, "XD");
+        employe[1] = new Emp(2, ":(");
+        employe[2] = new Emp(3, ";p");
+        return employe;
+    }
+>>>>>>> Stashed changes
 }

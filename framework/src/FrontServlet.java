@@ -113,6 +113,7 @@ public class FrontServlet extends HttpServlet {
                         if(Utile.AuthentifiedMethod(session, methode, nomSession) == false){
                             throw new Exception("Il y a une erreur, identifiez-vous");
                         }
+<<<<<<< Updated upstream
 
                         String vu = resultat.getView();
                         RequestDispatcher dispatcher = request.getRequestDispatcher(vu);
@@ -121,6 +122,15 @@ public class FrontServlet extends HttpServlet {
                     // else{
                     //     throw new Exception("Il y a une erreur, identifiez-vous");
                     // }                              
+=======
+                    }
+                    else{
+                        response.setContentType("text/json;charset=UTF-8");   
+                        String json = gson.toJson(objet);
+                        System.out.println(json);
+                        out.print(json);
+                    }
+>>>>>>> Stashed changes
                 }
             }
         } catch (Exception ex) {
